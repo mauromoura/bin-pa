@@ -10,13 +10,35 @@ func main() {
 	//bin := 7
 	weights := []int{5, 7, 5, 2, 4, 2, 5, 1, 6}
 	bin := 10
-	binPackingRecursive(weights, bin)
+	recursive := binPackingRecursive(weights, bin)
+	firstFit := firstFitBinPacking(weights, bin)
+	fmt.Println(recursive, firstFit)
 }
 
-func binPackingRecursive(weights []int, bin int) {
+func firstFitBinPacking(weights []int, bin int) int {
+	binSlice := []int{bin}
+	for i := 0; i < len(weights); i++ {
+		settled := false
+		j := 0
+		for !settled && j < len(binSlice) {
+			if weights[i] <= binSlice[j] {
+				binSlice[j] -= weights[i]
+				settled = true
+			} else {
+				j++
+			}
+		}
+		if !settled {
+			binSlice = append(binSlice, bin-weights[i])
+		}
+	}
+	return len(binSlice)
+}
+
+func binPackingRecursive(weights []int, bin int) int {
 	min := math.MaxInt32
 	permute(len(weights), weights, &min, bin)
-	fmt.Println(min)
+	return min
 }
 
 func bruteForce(A []int, bin int, min *int) {
@@ -33,7 +55,7 @@ func bruteForce(A []int, bin int, min *int) {
 	}
 	if count < *min {
 		*min = count
-		fmt.Println(A, count)
+		//fmt.Println(A, count)
 	}
 }
 
